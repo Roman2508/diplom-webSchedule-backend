@@ -1,10 +1,10 @@
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { Get, Post, Body, Patch, Param, UseGuards, Controller } from '@nestjs/common';
+import { Get, Post, Body, Patch, Param, UseGuards, Controller, Delete } from '@nestjs/common';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { GroupLoadLessonsService } from './group-load-lessons.service';
 import { CreateGroupLoadLessonDto } from './dto/create-group-load-lesson.dto';
-import { ChangeStudentsCountByNameAndTypeDto } from './dto/change-students-count-by-name-and-type.dto';
+import { UpdateGroupLoadLessonDto } from './dto/update-group-load-lesson.dto';
 
 @Controller('group-load-lessons')
 @ApiTags('group-load-lessons')
@@ -19,6 +19,17 @@ export class GroupLoadLessonsController {
     return this.groupLoadLessonsService.create(dto);
   }
 
+  @ApiBody({ type: UpdateGroupLoadLessonDto })
+  @Patch()
+  update(@Body() dto: UpdateGroupLoadLessonDto) {
+    return this.groupLoadLessonsService.update(dto);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: number) {
+    return this.groupLoadLessonsService.delete(id);
+  }
+
   @Get(':id')
   findAllByGroupId(@Param('id') id: string) {
     return this.groupLoadLessonsService.findAllByGroupId(+id);
@@ -31,12 +42,6 @@ export class GroupLoadLessonsController {
     @Param('itemId') itemId: string,
   ) {
     return this.groupLoadLessonsService.findLessonsForSchedule(+semester, scheduleType, +itemId);
-  }
-
-  @ApiBody({ type: ChangeStudentsCountByNameAndTypeDto })
-  @Patch('/students')
-  updateStudents(@Body() dto: ChangeStudentsCountByNameAndTypeDto) {
-    return this.groupLoadLessonsService.changeStudentsCountByNameAndType(dto);
   }
 
   @Patch('attach-teacher/:lessonId/:teacherId')

@@ -1,17 +1,10 @@
-import {
-  Get,
-  Body,
-  Post,
-  Patch,
-  Param,
-  UseGuards,
-  Controller,
-} from '@nestjs/common';
+import { Get, Body, Post, Patch, Param, UseGuards, Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { SettingsService } from './settings.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { UpdateSettingDto } from './dto/update-setting.dto';
+import { UpdateColorDto } from './dto/update-color.dto';
 
 @Controller('settings')
 @ApiTags('settings')
@@ -33,5 +26,10 @@ export class SettingsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateSettingDto) {
     return this.settingsService.update(+id, dto);
+  }
+
+  @Patch('color/:id')
+  updateColor(@Param('id') id: string, @Body() dto: UpdateColorDto) {
+    return this.settingsService.updateColor(+id, dto);
   }
 }

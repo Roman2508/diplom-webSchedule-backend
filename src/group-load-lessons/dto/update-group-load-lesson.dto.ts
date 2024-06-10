@@ -1,11 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ChangeStudentsCountByNameAndTypeDto {
+export class UpdateGroupLoadLessonDto {
   @ApiProperty()
-  id: number;
-
-  @ApiProperty()
-  students: number;
+  lessonId: number;
 
   @ApiProperty()
   type: string;
@@ -17,8 +14,5 @@ export class ChangeStudentsCountByNameAndTypeDto {
   semester: number;
 
   @ApiProperty()
-  subgroupNumber: number | null;
-
-  @ApiProperty()
-  specialization: string | null;
+  hours: number;
 }

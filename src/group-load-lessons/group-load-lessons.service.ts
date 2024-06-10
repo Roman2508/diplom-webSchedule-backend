@@ -6,7 +6,7 @@ import { TeacherEntity } from 'src/teachers/entities/teacher.entity';
 import { ChangeStudentsCountDto } from './dto/change-students-count.dto';
 import { GroupLoadLessonEntity } from './entities/group-load-lesson.entity';
 import { CreateGroupLoadLessonDto } from './dto/create-group-load-lesson.dto';
-import { ChangeStudentsCountByNameAndTypeDto } from './dto/change-students-count-by-name-and-type.dto';
+import { UpdateGroupLoadLessonDto } from './dto/update-group-load-lesson.dto';
 
 @Injectable()
 export class GroupLoadLessonsService {
@@ -53,7 +53,34 @@ export class GroupLoadLessonsService {
       return newLesson;
     } catch (err) {
       console.log(err.message);
-      throw new BadRequestException('Помилка при створенні навантаження групи');
+      throw new BadRequestException('Помилка при створенні елемента навантаження');
+    }
+  }
+
+  async update(dto: UpdateGroupLoadLessonDto) {
+    try {
+      const { lessonId, ...payload } = dto;
+      const lesson = await this.groupLoadLessonsRepository.findOne({ where: { id: lessonId } });
+      const updatedLesson = await this.groupLoadLessonsRepository.save({ ...lesson, ...payload });
+      return updatedLesson;
+    } catch (err) {
+      console.log(err.message);
+      throw new BadRequestException('Помилка при оновленні елемента навантаження');
+    }
+  }
+
+  async delete(id: number) {
+    try {
+      const res = await this.groupLoadLessonsRepository.delete(id);
+
+      if (res.affected === 0) {
+        throw new NotFoundException('Не знайдено');
+      }
+
+      return id;
+    } catch (err) {
+      console.log(err.message);
+      throw new BadRequestException('Помилка при видаленні елемента навантаження');
     }
   }
 
@@ -151,20 +178,6 @@ export class GroupLoadLessonsService {
     );
   }
 
-  async changeStudentsCountByNameAndType(dto: ChangeStudentsCountByNameAndTypeDto) {
-    await this.groupLoadLessonsRepository.update(
-      {
-        group: { id: dto.id },
-        type: dto.type,
-        name: dto.name,
-        semester: Number(dto.semester),
-      },
-      { students: Number(dto.students) },
-    );
-
-    return dto;
-  }
-
   /* teacher */
   async attachTeacher(lessonId: number, teacherId: number) {
     const lesson = await this.findOneLessonById(lessonId);
@@ -174,6 +187,7 @@ export class GroupLoadLessonsService {
     });
 
     if (!teacher) throw new BadRequestException('Викладача не знайдено!');
+
     await this.groupLoadLessonsRepository.save({
       ...lesson,
       teacher: { id: teacherId },
