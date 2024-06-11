@@ -2,8 +2,17 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateColorDto {
   @ApiProperty()
-  type: string;
+  lectures: string;
 
   @ApiProperty()
-  color: string;
+  practical: string;
+
+  @ApiProperty()
+  laboratory: string;
+
+  @ApiProperty()
+  seminars: string;
+
+  @ApiProperty()
+  exams: string;
 }

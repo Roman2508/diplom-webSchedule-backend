@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
@@ -35,5 +35,35 @@ export class UsersService {
     const { password: pass, ...result } = user;
 
     return result;
+  }
+
+  async findAll() {
+    return this.repository.find({ select: { id: true, fullName: true, email: true } });
+  }
+
+  async update(id: number, dto: CreateUserDto) {
+    const oldUserData = await this.repository.findOne({ where: { id } });
+
+    if (!oldUserData) throw new NotFoundException('Користувача не знайдено');
+
+    const salt = await genSalt(10);
+
+    const userData = {
+      ...oldUserData,
+      ...dto,
+      password: await hash(dto.password, salt),
+    };
+
+    return this.repository.save(userData);
+  }
+
+  async remove(id: number) {
+    const res = await this.repository.delete(id);
+
+    if (res.affected === 0) {
+      throw new NotFoundException('Групу не знайдено');
+    }
+
+    return id;
   }
 }
