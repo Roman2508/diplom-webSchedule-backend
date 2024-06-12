@@ -31,6 +31,11 @@ export class ScheduleLessonsController {
     return this.scheduleLessonsService.getAuditoryOverlay(date, +lessonNumber, +auditoryId);
   }
 
+  @Get('view/:semester/:teacher/:group')
+  findForView(@Param('semester') semester: string, @Param('teacher') teacher: string, @Param('group') group: string) {
+    return this.scheduleLessonsService.findForView(+semester, +teacher, +group);
+  }
+
   @Get(':semester/:type/:id')
   findAll(@Param('semester') semester: string, @Param('type') type: string, @Param('id') id: string) {
     return this.scheduleLessonsService.findAll(+semester, type, +id);

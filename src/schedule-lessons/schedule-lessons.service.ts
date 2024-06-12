@@ -240,6 +240,51 @@ export class ScheduleLessonsService {
     }
   }
 
+  async findForView(semester: number, teacherId: number, groupId: number) {
+    // dto: {type: 'group' | 'teacher' | 'auditory', id: ід групи, викладача або аудиторії, semester: номер семестру }
+
+    const settings = await this.settingsRepository.findOne({
+      where: { id: 1 },
+    });
+    if (!settings) throw new NotFoundException('Settings was not found');
+
+    // semester = 1 | 2
+    const { firstSemesterStart, secondSemesterStart, firstSemesterEnd, secondSemesterEnd } = settings;
+
+    const semesterStart = semester === 1 ? firstSemesterStart : secondSemesterStart;
+    const semesterEnd = semester === 1 ? firstSemesterEnd : secondSemesterEnd;
+
+    const start = semesterStart && customDayjs(semesterStart, 'MM.DD.YYYY').toDate();
+    const end = semesterEnd && customDayjs(semesterEnd, 'MM.DD.YYYY').toDate();
+    const date = start && end ? Between(start, end) : undefined;
+
+    const teacher = teacherId ? { id: teacherId } : undefined;
+    const group = groupId ? { id: groupId } : undefined;
+
+    return this.repository.find({
+      where: {
+        teacher,
+        group,
+        date,
+      },
+      relations: {
+        group: true,
+        teacher: true,
+        auditory: true,
+      },
+      select: {
+        group: { id: true, name: true },
+        teacher: {
+          id: true,
+          firstName: true,
+          middleName: true,
+          lastName: true,
+        },
+        auditory: { id: true, name: true },
+      },
+    });
+  }
+
   // Оновити аудиторію для виставленого елемента розкладу
   async update(id: number, dto: UpdateScheduleLessonDto) {
     const lesson = await this.repository.findOne({
