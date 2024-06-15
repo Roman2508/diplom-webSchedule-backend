@@ -8,11 +8,11 @@ import { UpdateGroupCategoryDto } from './dto/update-group-category.dto';
 
 @Controller('group-categories')
 @ApiTags('group-categories')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class GroupCategoriesController {
   constructor(private readonly groupCategoriesService: GroupCategoriesService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   create(@Body() dto: CreateGroupCategoryDto) {
     return this.groupCategoriesService.create(dto);
@@ -23,11 +23,15 @@ export class GroupCategoriesController {
     return this.groupCategoriesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateGroupCategoryDto) {
     return this.groupCategoriesService.update(+id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.groupCategoriesService.remove(+id);

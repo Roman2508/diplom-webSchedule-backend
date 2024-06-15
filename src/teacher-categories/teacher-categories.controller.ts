@@ -1,5 +1,5 @@
-import { Get, Post, Body, Patch, Param, Delete, UseGuards, Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { Get, Post, Body, Patch, Param, Delete, UseGuards, Controller } from '@nestjs/common';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { TeacherCategoriesService } from './teacher-categories.service';
@@ -8,8 +8,6 @@ import { UpdateTeacherCategoryDto } from './dto/update-teacher-category.dto';
 
 @Controller('teacher-categories')
 @ApiTags('teacher-categories')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class TeacherCategoriesController {
   constructor(private readonly teacherCategoriesService: TeacherCategoriesService) {}
 
@@ -18,17 +16,23 @@ export class TeacherCategoriesController {
     return this.teacherCategoriesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiBody({ type: CreateTeacherCategoryDto })
   @Post()
   create(@Body() dto: CreateTeacherCategoryDto) {
     return this.teacherCategoriesService.create(dto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateTeacherCategoryDto) {
     return this.teacherCategoriesService.update(+id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.teacherCategoriesService.remove(+id);
