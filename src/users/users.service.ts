@@ -13,17 +13,26 @@ export class UsersService {
   ) {}
 
   findByEmail(email: string) {
-    return this.repository.findOneBy({ email });
+    return this.repository.findOne({
+      where: { email },
+      relations: { department: true },
+      select: { department: { id: true } },
+    });
   }
 
   findById(id: number) {
-    return this.repository.findOneBy({ id });
+    return this.repository.findOne({
+      where: { id },
+      relations: { department: true },
+      select: { department: { id: true } },
+    });
   }
 
   async create(dto: CreateUserDto) {
     const salt = await genSalt(10);
 
     const newUser = this.repository.create({
+      department: dto.department ? { id: dto.department } : null,
       password: await hash(dto.password, salt),
       email: dto.email,
       fullName: dto.fullName,
@@ -38,7 +47,10 @@ export class UsersService {
   }
 
   async findAll() {
-    return this.repository.find({ select: { id: true, fullName: true, email: true } });
+    return this.repository.find({
+      relations: { department: true },
+      select: { department: { id: true } },
+    });
   }
 
   async update(id: number, dto: CreateUserDto) {
@@ -46,15 +58,26 @@ export class UsersService {
 
     if (!oldUserData) throw new NotFoundException('Користувача не знайдено');
 
-    const salt = await genSalt(10);
+    if (dto.password) {
+      const salt = await genSalt(10);
 
-    const userData = {
-      ...oldUserData,
-      ...dto,
-      password: await hash(dto.password, salt),
-    };
+      const userData = {
+        ...oldUserData,
+        ...dto,
+        department: dto.department ? { id: dto.department } : oldUserData.department,
+        password: await hash(dto.password, salt),
+      };
 
-    return this.repository.save(userData);
+      return this.repository.save(userData);
+    } else {
+      const userData = {
+        ...oldUserData,
+        ...dto,
+        department: dto.department ? { id: dto.department } : oldUserData.department,
+      };
+
+      return this.repository.save(userData);
+    }
   }
 
   async remove(id: number) {

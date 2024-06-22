@@ -19,7 +19,7 @@ export class AuthDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  access?: 'admin' | 'user';
+  access?: 'super_admin' | 'admin' | 'deans_office' | 'department_chair';
 }
 
 export class LoginDto {

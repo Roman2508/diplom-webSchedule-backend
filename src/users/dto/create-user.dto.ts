@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -14,5 +14,9 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
-  access?: 'admin' | 'user';
+  access?: 'super_admin' | 'admin' | 'deans_office' | 'department_chair';
+  
+  @IsOptional()
+  @IsNumber()
+  department?: number;
 }
