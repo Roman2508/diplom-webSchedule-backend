@@ -1,5 +1,5 @@
-import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -15,7 +15,7 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(process.env.APP_PORT || 7777, '0.0.0.0');
+  await app.listen(process.env.APP_PORT || 7777);
 }
 
 bootstrap();
